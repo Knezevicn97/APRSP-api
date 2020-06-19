@@ -2,7 +2,6 @@ const Bus = require('../model/bus');
 
 const utilsScraper = require('../utils/gspnsScraper');
 
-
 function getBuses(req, res) {
     let rv, linija;
     let cela_nedelja = [];
@@ -42,4 +41,27 @@ function getBuses(req, res) {
     }
 }
 
-module.exports = {getBuses};
+function getBus(req, res) {
+    let dan, rv, linija;
+
+    if (!req.query.dan || !req.query.rv || !req.params.id) {
+        return res.status(400)
+            .json({'message': 'Malformed request, query parameters dan and rv are required.'});
+    } else {
+        dan = req.query.dan.toUpperCase();
+        rv = req.query.rv.toLowerCase();
+        linija = req.params.id.toUpperCase();
+    }
+    if (dan !== 'R' && dan !== 'S' && dan !== 'N') {
+        return res.status(400)
+            .json({'message': 'Malformed request, allowed values for query parameter dan are \'R\', \'S\', \'N\''});
+    } else if (rv !== 'rvg' && rv !== 'rvp') {
+        return res.status(400)
+            .json({'message': 'Malformed request, allowed values for query parameter rv are \'rvg\', \'rvp\''});
+    }
+    utilsScraper.scrapeBus(linija, dan, rv)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+}
+
+module.exports = { getBuses, getBus };

@@ -13,8 +13,8 @@ app.use(bodyParser.json({ type: 'application/json'}));
 app.route('/lanes').get(lanesController.getLanes);
 app.route('/all-lanes').get(lanesController.getAllLanes);
 
-app.route('/all-buses/:id').get(busesController.getBuses);
 app.route('/buses/:id').get(busesController.getBus);
+app.route('/all-buses/:id').get(busesController.getBuses);
 
 app.listen(port);
 console.log('Listening on port ' + port);
